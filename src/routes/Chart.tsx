@@ -2,6 +2,7 @@
 import { useQuery } from 'react-query';
 import { fetchCoinHistory } from './api';
 import ApexChart from "react-apexcharts"
+import { Helmet } from "react-helmet-async";
 
 interface IHistorical {
   time_open: string;
@@ -19,9 +20,15 @@ interface ChartProps {
 }
 
 function Chart({coinId}:ChartProps) {
-
-  const {isLoading,data} = useQuery<IHistorical[]>(["ohlcv", coinId], ()=> fetchCoinHistory(coinId))
+  
+  const {isLoading,data} = useQuery<IHistorical[]>(
+    ["ohlcv", coinId], 
+    ()=> fetchCoinHistory(coinId),
+    {
+      refetchInterval : 5000,
+    })
   return (
+    <>
     <div>{isLoading? "Loading chart..." : <ApexChart 
     type="line" 
     series={[
@@ -71,8 +78,9 @@ function Chart({coinId}:ChartProps) {
   }
   /> 
   } 
+  
   </div>
-    )
-}
+    </>
+)}
 
 export default Chart;
